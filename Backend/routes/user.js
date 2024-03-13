@@ -71,7 +71,7 @@ const updateUser = zod.object({
     lastName : zod.string().optional() 
 })
 
-router.put('/', authMiddleware , async (req,res)=>{
+route.put('/', authMiddleware , async (req,res)=>{
         const {success} = updateUser.safeParse(req.body);
 
         if(!success){

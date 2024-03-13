@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { Schema } = require('zod');
 // mongoose.connect();
 
 const User  = mongoose.Schema({
@@ -35,8 +36,24 @@ const User  = mongoose.Schema({
     }
 })
 
+const AccountSchema = mongoose.Schema({
+    userId : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'User',
+        required : true
+    },
+    balance : {
+        type : Number,
+        required : true
+    }   
+})
+
+
+
 const user = mongoose.model('User',User)
+const Account = mongoose.model('Account',AccountSchema)
 
 module.exports = {
-    user
+    user,
+    Account
 }

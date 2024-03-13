@@ -2,7 +2,7 @@ const zod = require('zod');
 const jwt = require('jsonwebtoken');
 const express = require('express');
 const route = express.Router();
-const { user } = require('../db.js');
+const { user, Account } = require('../db.js');
 const JWT_SECRET = require('../config');
 const { authMiddleware } = require('../middlewares/authmiddleware.js');
 
@@ -34,6 +34,12 @@ route.post('/signup',async (req,res)=>{
 
     const userId = userdb._id;
     const token = jwt.sign(userId,JWT_SECRET)
+
+    await Account.create({
+        userId : userId,
+        balance : 1+Math.random()*1000
+    })
+
     res.status(200).json({
         message: "User created successfully",
         token: token
@@ -81,6 +87,33 @@ route.put('/', authMiddleware , async (req,res)=>{
         await user.updateOne({_id:req.userId},req.body)
 
         res.json({message:"updated successfully"})
+})
+
+route.get('/bulk',async (req,res)=>{
+    const filter = req.query.filter || "";
+
+    const sameUser = await user.find({
+        $or : [{
+            firstName : {
+                "$regex" : filter
+            }
+        },{
+            lastName : {
+                "$regex" : filter
+            }
+        }
+    ]
+    })
+
+    res.json({
+        user : sameUser.map(user => ({
+            userName : user,userName,
+            firstName : user.firstName,
+            lastName : user.lastName,
+            _id : user._id
+        }))
+    })
+
 })
 
 

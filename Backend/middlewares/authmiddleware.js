@@ -21,4 +21,31 @@ async function authMiddleware(req,res,next){
 
 }
 
+Router.get('/bulk',async (req,res)=>{
+    const filter = req.query.filter || "";
+
+    const sameUser = await user.find({
+        $or : [{
+            firstName : {
+                "$regex" : filter
+            }
+        },{
+            lastName : {
+                "$regex" : filter
+            }
+        }
+    ]
+    })
+
+    res.json({
+        user : sameUser.map(user => ({
+            userName : user,userName,
+            firstName : user.firstName,
+            lastName : user.lastName,
+            _id : user._id
+        }))
+    })
+
+})
+
 module.exports = {authMiddleware};

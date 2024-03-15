@@ -7,7 +7,6 @@ import Send from './component/Send';
 function App() {
   return (
     <>
-    <Signin/>
      <BrowserRouter>
       <Routes>
           <Route path='/signin' element = {<Signin/>}/>

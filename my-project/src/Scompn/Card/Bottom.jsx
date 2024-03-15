@@ -1,10 +1,11 @@
 import React from 'react'
+import  {Link} from 'react-router-dom'
 
-function Bottom(text) {
+function Bottom({text}) {
   return (
     <div className='my-2'>
-      {text=='login'? (<div>New to Paytm? <a href='#'>Create account</a> </div>):
-      (<div className='text-lg'>Already have an account ? <a className='text-lg text-blue-500 font-bold hover:underline' href='#'>Sign In</a> </div>)}
+      {text=='login'? (<div className='text-lg'>New to Paytm? <Link className='text-lg text-blue-500 font-bold hover:underline' to="/Signup">Create account</Link> </div>):
+      (<div className='text-lg'>Already have an account ? <Link className='text-lg text-blue-500 font-bold hover:underline' to='/Signin'>Sign In</Link> </div>)}
     </div>
   )
 }

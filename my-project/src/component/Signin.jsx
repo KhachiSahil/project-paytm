@@ -17,7 +17,7 @@ function Signin() {
         <Input type={'text'} fieldText={'Email'} />
         <Input type={'password'} fieldText={'Password'} />
         <Button buttonType={'Pay Securely'} />
-        <Bottom />
+        <Bottom text={'login'}/> 
       </div>
     </div>
   );

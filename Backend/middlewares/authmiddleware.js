@@ -3,10 +3,9 @@ const JWT_SECRET = require('../config.js');
 
 
 async function authMiddleware(req,res,next){
-    const header = req.headers.Authorization;
-    
+    const header = req.headers.authorization;
     if (!header || !header.startsWith('Bearer ')) {
-        return res.status(403).json({});
+        return res.status(403).json({msg:"hey here"});
     }
 
     const token  = header.split(' ')[1]
@@ -14,9 +13,9 @@ async function authMiddleware(req,res,next){
         const decoded = jwt.verify(token,JWT_SECRET);
         req.userId = decoded.userId;
 
-        next();
+         next();
     }catch(err){
-        return res.status(403).json({})
+        return res.status(403).json({msg:"hey there"})
     }
 
 }

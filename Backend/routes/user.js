@@ -7,47 +7,51 @@ const JWT_SECRET = require('../config');
 const { authMiddleware } = require('../middlewares/authmiddleware.js');
 
 const userSchema = zod.object({
-    userName : zod.string().email().min(3).max(30),
+    userName : zod.string().min(3).max(30),
     firstName: zod.string(),
 	lastName: zod.string(),
 	password: zod.string()
-})
+}) 
+ 
+route.post('/signup', async (req, res) => {
+    const { success, error } = userSchema.safeParse(req.body);
 
-route.post('/signup',async (req,res)=>{
-    const {success} = userSchema.safeParse(req.body)
-
-    if(!success){
-        res.status(411).json({msg: 'Email already taken'})
-    }
+    if (!success) {
+        return res.status(411).json({ msg: 'Validation failed', error });
+    } 
     
-    const userExist = await user.findOne({userName: req.body.userName});
-    if(userExist){
-        res.status(411).json({msg: 'Email already taken'})
+    const userExist = await user.findOne({ userName: req.body.userName });
+    if (userExist) {
+        return res.status(409).json({ msg: 'Email already taken' });
     }
 
-    const userdb = await user.create({
-        userName: req.body.username,
-        password: req.body.password,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-    })
+    try {
+        const userdb = await user.create({
+            userName: req.body.userName,
+            password: req.body.password,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+        });
+        const userId = userdb._id;
+        const token = jwt.sign({ userId }, JWT_SECRET);
 
-    const userId = userdb._id;
-    const token = jwt.sign(userId,JWT_SECRET)
+        await Account.create({
+            userId: userId,
+            balance: 1 + Math.random() * 1000
+        });
 
-    await Account.create({
-        userId : userId,
-        balance : 1+Math.random()*1000
-    })
-
-    res.status(200).json({
-        message: "User created successfully",
-        token: token
-    })
-})
+        return res.status(200).json({
+            message: "User created successfully",
+            token: token
+        });
+    } catch (err) {
+        console.error("Error creating user:", err);
+        return res.status(500).json({ msg: 'Internal server error' });
+    }
+});
 
 const signinBody = zod.object({
-    username: zod.string().email(),
+    userName: zod.string().email(),
 	password: zod.string()
 })
 
@@ -65,8 +69,8 @@ route.post('/signin',async (req,res)=>{
     if(!signUser){
             res.status(411).json({message: "Error while logging in"})
         }
-
-    const reToken = jwt.sign({userId:user._id},JWT_SECRET);
+        console.log(signUser._id)
+    const reToken = jwt.sign({userId:signUser._id},JWT_SECRET);
     res.json({token: reToken})
 
 })
@@ -91,7 +95,7 @@ route.put('/', authMiddleware , async (req,res)=>{
 
 route.get('/bulk',async (req,res)=>{
     const filter = req.query.filter || "";
-
+    console.log(filter)
     const sameUser = await user.find({
         $or : [{
             firstName : {
@@ -107,7 +111,7 @@ route.get('/bulk',async (req,res)=>{
 
     res.json({
         user : sameUser.map(user => ({
-            userName : user,userName,
+            userName : user.userName,
             firstName : user.firstName,
             lastName : user.lastName,
             _id : user._id

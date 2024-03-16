@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const { Schema } = require('zod');
-// mongoose.connect();
+mongoose.connect('mongodb+srv://paytmdb:7ERtIsF2rSDLg88q@sahildb.d8gizka.mongodb.net/');
 
-const User  = mongoose.Schema({
+const User  = new mongoose.Schema({
     userName : {
         type : String,
         required : true,
@@ -11,7 +11,7 @@ const User  = mongoose.Schema({
         maxLength : 30,
         lowercase : true,
         unique : true
-    }, 
+    },  
 
     password : {
         type: String,
@@ -36,7 +36,7 @@ const User  = mongoose.Schema({
     }
 })
 
-const AccountSchema = mongoose.Schema({
+const AccountSchema = new mongoose.Schema({
     userId : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'User',

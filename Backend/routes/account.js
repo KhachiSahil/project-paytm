@@ -16,7 +16,7 @@ accountRoute.get('/balance', authMiddleware ,async (req,res)=>{
 })
 
 accountRoute.post('/transfer', authMiddleware ,async (req,res)=>{
-        const session = await mongoose.startSession();
+        try{const session = await mongoose.startSession();
 
         session.startTransaction();
         const to = req.body.to;
@@ -35,10 +35,10 @@ accountRoute.post('/transfer', authMiddleware ,async (req,res)=>{
         }
 
         await Account.updateOne({userId:req.userId},{$inc : {balance : -amount}}).session(session);
-        await Account.updateOne({userId : to},{$inc : {balance:amount}}),session(session);
+        await Account.updateOne({userId : to},{$inc : {balance:amount}}).session(session);
 
         await session.commitTransaction();
-        res.status(200).json({message:"Transaction succeded"})
+        res.status(200).json({message:"Transaction succeded"})}catch(err){console.log(err)}
 
 
 })

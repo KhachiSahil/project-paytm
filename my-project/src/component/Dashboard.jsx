@@ -6,11 +6,10 @@ function Dashboard() {
   return (
     <div>
       <Head value= {'Payments App'}/>
-      <Balance/>
-      <User/>
+      <Balance />
+      <User />
     </div>
   )
 }
-import Header from '../Scompn/Dash/Head'
 
 export default Dashboard

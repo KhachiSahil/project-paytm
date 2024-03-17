@@ -14,6 +14,7 @@ const userSchema = zod.object({
 }) 
  
 route.post('/signup', async (req, res) => {
+    try {
     const { success, error } = userSchema.safeParse(req.body);
 
     if (!success) {
@@ -25,7 +26,7 @@ route.post('/signup', async (req, res) => {
         return res.status(409).json({ msg: 'Email already taken' });
     }
 
-    try {
+    
         const userdb = await user.create({
             userName: req.body.userName,
             password: req.body.password,
@@ -68,10 +69,9 @@ route.post('/signin',async (req,res)=>{
         })
     if(!signUser){
             res.status(411).json({message: "Error while logging in"})
-        }
-        console.log(signUser._id)
+        } 
     const reToken = jwt.sign({userId:signUser._id},JWT_SECRET);
-    res.json({token: reToken})
+    res.status(200).json({token: reToken})
 
 })
 
@@ -94,8 +94,7 @@ route.put('/', authMiddleware , async (req,res)=>{
 })
 
 route.get('/bulk',async (req,res)=>{
-    const filter = req.query.filter || "";
-    console.log(filter)
+    const filter = req.query.filter || "";  
     const sameUser = await user.find({
         $or : [{
             firstName : {
@@ -120,5 +119,23 @@ route.get('/bulk',async (req,res)=>{
 
 })
 
+route.get('/name', authMiddleware ,async (req,res)=>{
+    const user = await Account.findOne({
+        userId : req.userId
+    })
+    
+   res.status(200).json({user})
+})
 
-module.exports = route;
+route.get('/userid', async (req, res) => {
+    const id = req.query.userid;
+    try {
+        const User = await user.findOne({ _id: id });
+        res.status(200).json({ User });
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }   
+});
+
+module.exports = route; 

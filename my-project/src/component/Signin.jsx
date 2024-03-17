@@ -1,10 +1,13 @@
-import React from 'react';
+import { useState } from 'react';
 import Heading from '../Scompn/Card/Heading';
 import Input from '../Scompn/Card/Input';
 import Button from '../Scompn/Card/Button';
 import Bottom from '../Scompn/Card/Bottom';
+import Moving from './Moving';
 
 function Signin() {
+  
+
   return (
     <div className='flex flex-row'>
       <div className='object-contain w-1/2'>
@@ -14,12 +17,10 @@ function Signin() {
       <div className='w-1/2 flex flex-col justify-center items-center p-8 animate-fade-right animate-duration-1000 animate-delay-100  0 animate-ease-out'>
         <Heading text={'Sign In'} />
         <p className="font-mono font-medium font-extrabold text-cyan-500 text-2xl mb-3 mr-11">Happy Payments</p>
-        <Input type={'text'} fieldText={'Email'} />
-        <Input type={'password'} fieldText={'Password'} />
-        <Button buttonType={'Pay Securely'} />
-        <Bottom text={'login'}/> 
-      </div>
-    </div>
+        <Moving/>
+        <Bottom  text={'login'}/> 
+      </div> 
+    </div> 
   );
 }
 

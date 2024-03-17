@@ -24,15 +24,15 @@ route.post('/signup', async (req, res) => {
     const userExist = await user.findOne({ userName: req.body.userName });
     if (userExist) {
         return res.status(409).json({ msg: 'Email already taken' });
-    }
+    } 
 
     
         const userdb = await user.create({
             userName: req.body.userName,
             password: req.body.password,
             firstName: req.body.firstName,
-            lastName: req.body.lastName,
-        });
+            lastName: req.body.lastName, 
+        }); 
         const userId = userdb._id;
         const token = jwt.sign({ userId }, JWT_SECRET);
 

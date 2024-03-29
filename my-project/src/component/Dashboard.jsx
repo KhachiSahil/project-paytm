@@ -11,29 +11,37 @@ function Dashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) {
-      const tokenString = `Bearer ${token}`;
-
-      const fetchUserData = async () => {
-        try {
-          const response = await axios.get('http://localhost:3000/api/v1/user/name', {
-            headers: {
-              Authorization: tokenString,
-            },
-          });
-          setUserData(response.data);
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      };
-
-      fetchUserData();
+    if (!token) {
+      // Redirect to login if token is not present
+      navigate('/');
+      return;
     }
-  }, []);
-  const buttonHandle=()=>{
-    localStorage.removeItem("token")
-    navigate('/')
-  }
+
+    const tokenString = `Bearer ${token}`;
+
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get('http://localhost:3000/api/v1/user/name', {
+          headers: {
+            Authorization: tokenString,
+          },
+        });
+        setUserData(response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, [navigate]);
+
+  const handleLogout = () => {
+    // Clear token from local storage
+    localStorage.removeItem('token');
+    // Redirect to login page
+    navigate('/');
+  };
+
   const userId = userData?.user?.userId;
   const balance = userData?.user?.balance;
 
@@ -41,8 +49,10 @@ function Dashboard() {
     <div>
       <button className='absolute bottom-0 right-0 bg-transparent hover:bg-blue-500 text-blue-700 font-semibold 
     hover:text-white py-2 px-4 border border-blue-500  hover:border-transparent rounded-full my-7 mr-7'
-    onClick={buttonHandle}
-    > Log out</button>
+        onClick={handleLogout}
+      >
+        Log out
+      </button>
       <Head value={'Payments App'} userid={userId} />
       <Balance balance={balance ? balance.toFixed(2) : 'Loading...'} />
       <User />

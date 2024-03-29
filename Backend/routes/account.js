@@ -49,7 +49,6 @@ accountRoute.post('/transfer', authMiddleware, async (req, res) => {
     }
 });
 
-
 module.exports = {
     accountRoute
 }
